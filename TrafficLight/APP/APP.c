@@ -44,7 +44,7 @@ void app_inits(void){
 	ledInit(PORTB_ID,PIN2_ID); //red
 
 	// initializing Interrupt Button Pin
-	PushButtonInit(PORTD_ID,PIN2_ID); //INT0
+	//PushButtonInit(PORTD_ID,PIN2_ID); //INT0
 
 
 	//Initializing INTERRUPT 0
@@ -67,12 +67,14 @@ void app_start(void){
 	// Green led for cars & Red led for ped. is on for five seconds
 	 ledOn(PORTA_ID,PIN0_ID);
 	 ledOn(PORTB_ID,PIN2_ID);
+	 buttonClick=1;
 	 Timer0_Delay(20);
 
      // After 5 second  Green led for cars & Red led for ped. switched OFF
      // And yellow LEDs of both will blinking for five second
      ledOff(PORTA_ID,PIN0_ID);
      ledOff(PORTB_ID,PIN2_ID);
+     buttonClick=0;
      Blinking_yellow();
      ledOff(PORTA_ID,PIN1_ID);
      ledOff(PORTB_ID,PIN1_ID);
@@ -92,6 +94,7 @@ void app_start(void){
 
      ledOff(PORTA_ID,PIN1_ID);
      ledOff(PORTB_ID,PIN1_ID);
+     app_start();
 
 
 }
@@ -128,18 +131,6 @@ void Blinking_yellow()
 	ledToggle(PORTB_ID,PIN1_ID); // YELLOW LED FOR PEDESTRIANS
 	Timer0_Delay(5);
 
-	/*ledToggle(PORTA_ID,PIN1_ID);
-	ledToggle(PORTB_ID,PIN1_ID);  // YELLOW LED FOR PEDESTRIANS
-	Timer0_Delay(5);
-
-	ledToggle(PORTA_ID,PIN1_ID);
-	ledToggle(PORTB_ID,PIN1_ID);   // YELLOW LED FOR PEDESTRIANS
-	Timer0_Delay(5);
-
-	ledToggle(PORTA_ID,PIN1_ID);
-    ledToggle(PORTB_ID,PIN1_ID);  // YELLOW LED FOR PEDESTRIANS
-	Timer0_Delay(5);*/
-
 	 Yellow_is_blinking = 0;
 }
 /*******************************************************************************
@@ -158,10 +149,18 @@ void PED_Mood ()
 		 the pedestrian's Green LED and the cars' Red LEDs will be on for five seconds
 		*/
 
-	if ( BIT_IS_SET(PORTA_ID,PIN2_ID) )  // check if the button is pressed when the cars' RED LED is on
-		 {   ledOn(PORTA_ID,PIN2_ID);  // RED LED FOR CARS
-			 ledOn(PORTB_ID,PIN0_ID);  // GREEN LED FOR PEDESTRIANS
-		   	Timer0_Delay(20);
+	//BIT_IS_SET(PORTA_ID,PIN2_ID)
+	   if (buttonClick==1)  // check if the button is pressed when the cars' RED LED is on
+		 {
+		   ledOff(PORTA_ID,PIN0_ID);  // GREEN LED FOR CARS
+		   Blinking_yellow ();
+		   ledOff(PORTA_ID,PIN1_ID);  // YELLOW LED FOR CARS
+		   ledOff(PORTB_ID,PIN1_ID);  // YELLOW LED FOR PEDESTRIANS
+		   ledOff(PORTB_ID,PIN2_ID); // RED LED FOR PEDSTRAINS
+		   ledOn(PORTA_ID,PIN2_ID);  // RED LED FOR CARS
+		   ledOn(PORTB_ID,PIN0_ID);  // GREEN LED FOR PEDSTRAINS
+	     	 Timer0_Delay(20);
+
 		 }
 
 	    /*     SECOND CASE:
@@ -202,6 +201,7 @@ void PED_Mood ()
 		  Timer0_Delay(20);
 		  ledOff(PORTA_ID,PIN0_ID);  // GREEN LED FOR CARS
 		  ledOff(PORTB_ID,PIN2_ID);  // RED LED FOR PEDESTRIANS
+		  app_start();
 
 }
 
